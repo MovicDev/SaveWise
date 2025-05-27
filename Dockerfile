@@ -1,14 +1,15 @@
-# Use the official PHP Apache image
 FROM php:8.2-apache
 
-# Install PDO PostgreSQL driver
-RUN docker-php-ext-install pdo pdo_pgsql
+# Install required system packages first
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql
 
-# Enable Apache mod_rewrite (optional)
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Copy app files
+# Copy your PHP app into the container
 COPY . /var/www/html/
 
-# Set working directory
-WORKDIR /var/www/html
+# Set correct permissions (optional)
+RUN chown -R www-data:www-data /var/www/html
