@@ -1,15 +1,23 @@
 FROM php:8.2-apache
 
-# Install required system packages first
+# Install system dependencies and php extensions
 RUN apt-get update && apt-get install -y \
     libpq-dev \
+    unzip \
+    git \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Install Composer (official install method)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy your PHP app into the container
+# Copy application code
 COPY . /var/www/html/
 
-# Set correct permissions (optional)
+# Run composer install inside the container (non-interactive)
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html
+
+# Enable Apache mod_rewrite if needed
+RUN a2enmod rewrite
+
+# Fix permissions
 RUN chown -R www-data:www-data /var/www/html
