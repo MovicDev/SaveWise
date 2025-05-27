@@ -13,16 +13,19 @@
 ?> -->
 
 <?php
-$host = getenv('movicdev.render.com') ?: 'localhost';
-$db = getenv('savewise_db') ?: 'savewise';
-$user = getenv(name: 'savewise_user') ?: 'root';
-$pass = getenv('savewise_pass') ?: '';
-$port = getenv('5432') ?: '5432';
+$host = getenv('DB_HOST');
+$db = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASSWORD');
+$port = getenv('DB_PORT') ?: '5432';
 
 try {
     $dsn = "pgsql:host=$host;port=$port;dbname=$db;";
     $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $db_status = "Connected to PostgreSQL!";
+    $db_status = " Connected to PostgreSQL!";
 } catch (PDOException $e) {
     $db_status = "Connection failed: " . $e->getMessage();
 }
+
+echo $db_status;
+?>
